@@ -4,151 +4,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>দেশ বিদেশ শপিং শপ</title>
+
+<title>দেশ বিদেশ শপিং সেন্টার</title>
+
 <style>
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: sans-serif;
   margin: 0;
+  font-family: Arial, sans-serif;
   background: #f4f6f8;
   color: #222;
 }
+
 header {
-  background: #087f5b;
+  background: #087b43;
   color: white;
   text-align: center;
-  padding: 25px 10px;
+  padding: 22px 10px;
 }
-main {
+
+header h1 {
+  margin: 0 0 10px;
+}
+
+header p {
+  margin: 5px;
+}
+
+.currency {
   text-align: center;
-  padding: 25px 15px;
-}
-.card {
+  padding: 15px;
   background: white;
-  padding: 20px;
-  margin: 15px auto;
-  max-width: 400px;
-  border-radius: 10px;
 }
+
+.currency select {
+  padding: 10px;
+  font-size: 16px;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 15px;
+  padding: 15px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+.product {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  padding-bottom: 15px;
+  box-shadow: 0 2px 8px #00000015;
+}
+
+.product img {
+  width: 100%;
+  height: 175px;
+  object-fit: cover;
+  background: #eee;
+}
+
+.product h3 {
+  font-size: 17px;
+  margin: 12px 5px 8px;
+}
+
+.price {
+  color: #087b43;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
 button {
-  background: #087f5b;
+  background: #087b43;
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 16px;
+  padding: 10px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button:hover {
+  background: #055d32;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 10px;
+  background: #173c2b;
+  color: white;
+  margin-top: 25px;
+}
+
+footer a {
+  color: #ffeb80;
+}
+
+.note {
+  text-align: center;
+  padding: 10px;
+  color: #555;
 }
 </style>
 </head>
+
 <body>
+
 <header>
-  <h1>দেশ বিদেশ শপিং শপ</h1>
-  <p>বাংলাদেশ ও মালয়েশিয়ার অনলাইন শপিং</p>
+  <h1>দেশ বিদেশ শপিং সেন্টার</h1>
+  <p>Desh Bidesh Shopping Center</p>
+  <p>বাংলাদেশ ও মালয়েশিয়ায় অনলাইন শপিং</p>
 </header>
-<main>
-  <div class="card">
-    <h2>আমাদের ওয়েবসাইটে স্বাগতম!</h2>
-    <p>আপনার পছন্দের পণ্য খুঁজুন।</p>
-    <p>আমাদের অনলাইন শপে আপনাকে স্বাগতম।</p>
-    <button onclick="alert('যোগাযোগের তথ্য শীঘ্রই যোগ করা হবে।')">যোগাযোগ করুন+601127199605</button>
-  </div>
-</main><!-- Desh Bidesh Shopping Center Products -->
-<style>
-.products-section {
-  padding: 15px;
-  font-family: Arial, sans-serif;
-  text-align: center;
+
+<div class="currency">
+  <label for="currency"><strong>আপনার মুদ্রা বেছে নিন:</strong></label>
+  <br><br>
+  <select id="currency" onchange="showProducts()">
+    <option value="BDT">বাংলাদেশি টাকা (৳)</option>
+    <option value="MYR">মালয়েশিয়ান রিঙ্গিত (RM)</option>
+  </select>
+</div>
+
+<h2>আমাদের পণ্যসমূহ</h2>
+
+<p class="note">
+  পণ্য পছন্দ করুন, দাম দেখুন এবং WhatsApp-এ অর্ডার করুন।
+</p>
+
+<div class="products" id="products"></div>
+
+<footer>
+  <h3>দেশ বিদেশ শপিং সেন্টার</h3>
+  <p>পণ্য অর্ডার করতে নিচের বোতামে চাপ দিন।</p>
+  <p>যোগাযোগ: WhatsApp</p>
+  <p>© Desh Bidesh Shopping Center</p>
+</footer>
+
+<script>
+/*
+  এখানে আপনার নিজের WhatsApp নম্বর বসাবেন।
+  দেশের কোডসহ নম্বর লিখবেন, কিন্তু + বা স্পেস দেবেন না।
+  উদাহরণ: 60123456789
+*/
+const WHATSAPP_NUMBER = "60123456789";
+
+/*
+  এগুলো নমুনা দাম।
+  BDT = বাংলাদেশি টাকা
+  MYR = মালয়েশিয়ান রিঙ্গিত
+
+  1 MYR = 30 BDT এখানে শুধু উদাহরণ হিসেবে ধরা হয়েছে।
+  আসল বিনিময় হার অনুযায়ী পরিবর্তন করবেন।
+*/
+
+const products = [
+  {
+    name: "পুরুষদের টি-শার্ট",
+    category: "জামা",
+    bdt: 450,
+    myr: 15,
+    image: "https://placehold.co/400x400?text=T-Shirt"
+  },
+  {
+    name: "পুরুষদের শার্ট",
+    category: "জামা",
+    bdt: 900,
+    myr: 30,
+    image: "https://placehold.co/400x400?text=Shirt"
+  },
+  {
+    name: "মহিলাদের পোশাক",
+    category: "জামা",
+    bdt: 1200,
+    myr: 40,
+    image: "https://placehold.co/400x400?text=Women+Dress"
+  },
+  {
+    name: "মহিলাদের থ্রি-পিস",
+    category: "জামা",
+    bdt: 1800,
+    myr: 60,
+    image: "https://placehold.co/400x400?text=Three+Piece"
+  },
+  {
+    name: "জিন্স প্যান্ট",
+    category: "জামা",
+    bdt: 1050,
+    myr: 35,
+    image: "https://placehold.co/400x400?text=Jeans"
+  },
+  {
+    name: "স্পোর্টস জুতা",
+    category: "জুতা",
+    bdt: 1500,
+    myr: 50,
+    image: "https://placehold.co/400x400?text=Shoes"
+  },
+  {
+    name: "স্যান্ডেল",
+    category: "জুতা",
+    bdt: 600,
+    myr: 20,
+    image: "https://placehold.co/400x400?text=Sandals"
+  },
+  {
+    name: "মহিলাদের ব্যাগ",
+    category: "ব্যাগ",
+    bdt: 900,
+    myr: 30,
+    image: "https://placehold.co/400x400?text=Handbag"
+  },
+  {
+    name: "স্কুল ব্যাগ",
+    category: "ব্যাগ",
+    bdt: 750,
+    myr: 25,
+    image: "https://placehold.co/400x400?text=School+Bag"
+  },
+  {
+    name: "বাচ্চাদের পোশাক",
+    category: "জামা",
+    bdt: 600,
+    myr: 20,
+    image: "https://placehold.co/400x400?text=Kids+Clothes"
+  }
+];
+
+function showProducts() {
+  const currency = document.getElementById("currency").value;
+  const container = document.getElementById("products");
+
+  container.innerHTML = "";
+
+  products.forEach(function(product) {
+    const price = currency === "BDT"
+      ? "৳ " + product.bdt
+      : "RM " + product.myr;
+
+    const card = document.createElement("div");
+    card.className = "product";
+
+    const img = document.createElement("img");
+    img.src = product.image;
+    img.alt = product.name;
+    img.loading = "lazy";
+
+    const title = document.createElement("h3");
+    title.textContent = product.name;
+
+    const category = document.createElement("p");
+    category.textContent = "ধরন: " + product.category;
+
+    const priceElement = document.createElement("p");
+    priceElement.className = "price";
+    priceElement.textContent = price;
+
+    const button = document.createElement("button");
+    button.textContent = "WhatsApp-এ অর্ডার";
+
+    button.onclick = function() {
+      const message =
+        "আমি এই পণ্যটি অর্ডার করতে চাই।\n" +
+        "পণ্যের নাম: " + product.name + "\n" +
+        "দাম: " + price + "\n" +
+        "দেশ ও ডেলিভারির তথ্য জানতে চাই।";
+
+      const url =
+        "https://wa.me/" + WHATSAPP_NUMBER +
+        "?text=" + encodeURIComponent(message);
+
+      window.open(url, "_blank");
+    };
+
+    card.appendChild(img);
+    card.appendChild(title);
+    card.appendChild(category);
+    card.appendChild(priceElement);
+    card.appendChild(button);
+
+    container.appendChild(card);
+  });
 }
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-.product-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 10px;
-  background: #fff;
-}
-.product-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-.product-card h3 {
-  font-size: 16px;
-}
-.order-button {
-  display: block;
-  background: #168a45;
-  color: white;
-  padding: 10px 5px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 14px;
-}
-</style>
 
-<section class="products-section">
-  <h2>🛍️ আমাদের পণ্যসমূহ</h2>
-  <p>বাংলাদেশ ও মালয়েশিয়ায় অর্ডার করুন</p>
+showProducts();
+</script>
 
-  <div class="products-grid">
-
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"
-           alt="জামা">
-      <h3>👕 জামা-কাপড়</h3>
-      <p>দাম: পরে যোগ করা হবে</p>
-      <a class="order-button"
-         href="https://wa.me/601127199605?text=আমি%20জামা-কাপড়%20অর্ডার%20করতে%20চাই">
-         WhatsApp-এ অর্ডার
-      </a>
-    </div>
-
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff"
-           alt="জুতা">
-      <h3>👟 জুতা</h3>
-      <p>দাম: পরে যোগ করা হবে</p>
-      <a class="order-button"
-         href="https://wa.me/601127199605?text=আমি%20জুতা%20অর্ডার%20করতে%20চাই">
-         WhatsApp-এ অর্ডার
-      </a>
-    </div>
-
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa"
-           alt="ব্যাগ">
-      <h3>👜 ব্যাগ</h3>
-      <p>দাম: পরে যোগ করা হবে</p>
-      <a class="order-button"
-         href="https://wa.me/601127199605?text=আমি%20ব্যাগ%20অর্ডার%20করতে%20চাই">
-         WhatsApp-এ অর্ডার
-      </a>
-    </div>
-
-    <div class="product-card">
-      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b"
-           alt="ফ্যাশন পণ্য">
-      <h3>👗 অন্যান্য পণ্য</h3>
-      <p>দাম: পরে যোগ করা হবে</p>
-      <a class="order-button"
-         href="https://wa.me/601127199605?text=আমি%20অন্যান্য%20পণ্য%20দেখতে%20চাই">
-         WhatsApp-এ অর্ডার
-      </a>
-    </div>
-
-  </div>
-</section>< /body>
-</html>কোডটি আঙুল দিয়ে চেপে ধরে Copy করুন।
-HTML
-এই দামগুলো শুধু নমুনা। বিক্রি শুরু করার আগে আপনার আসল দাম অনুযায়ী পরিবর্তন করবেন।
-ধাপ ২: কোড বসান
-১. GitHub-এর HTML কোডে ফিরে যান।
-২. </body>-এর ঠিক আগে যে খালি লাইন তৈরি করেছেন, সেখানে চাপ দিন।
-৩. Paste চাপ দিয়ে কোডটি বসান।
-নিশ্চিত করুন, নতুন কোডটি </body>-এর আগে আছে।
-ধাপ ৩: আমাকে জানান
-কোডটি বসাতে পেরেছেন?
-htm
+</body>
+</html>
